@@ -1,0 +1,17 @@
+vendor
+.env
+.git
+Dockerfile
+.dockerignore
+storage/*.key
+public/storage
+public/hot
+public/mix-manifest.json
+node_modules
+npm-debug.log
+yarn-error.log
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+.vagrant
+auth.json

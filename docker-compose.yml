@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: school_erp_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: school_erp
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: password
+      MYSQL_USER: user
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Laravel Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        user: vaibhav
+        uid: 1000
+    container_name: school_erp_backend
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=school_erp
+      - DB_USERNAME=user
+      - DB_PASSWORD=password
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    command: sh -c "echo 'EduVerse Startup - Waiting for database...' && until php artisan db:monitor --databases=mysql > /dev/null 2>&1; do sleep 2; done && echo 'EduVerse Startup - Database is ready. Running migrations...' && php artisan migrate --force && echo 'EduVerse Startup - Seeding demo data...' && php artisan db:seed --force && echo 'EduVerse Startup - Clearing caches...' && php artisan config:clear && php artisan route:clear && echo 'EduVerse Startup - Dashboard is ready. Starting server...' && php artisan serve --host=0.0.0.0 --port=8000"
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: school_erp_frontend
+    restart: always
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # prevent local node_modules from overwriting container's
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

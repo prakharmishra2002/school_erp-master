@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files
+.env
+.env.backup
+.env.production
+.env.local
+
+# Logs
+*.log
+docker_build.log
+docker_build_utf8.log
+
+# Build & Cache
+.next/
+out/
+build/
+dist/
+.phpunit.result.cache
+.phpunit.cache
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Binaries & Archives
+composer.phar
+backend/composer.phar
+
+# Scratch files
+backend/migrate_output.txt
+backend/out.txt
+backend/out_utf8.txt
